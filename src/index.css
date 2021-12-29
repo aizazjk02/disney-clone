@@ -1,13 +1,52 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+ 
+ /* For Smooth Scrolling  */
+ html {
+   scroll-behavior: smooth;
+ }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
+ /* To avoid uneven widths and heights */
+ * {
+   /* The width and height will include the padding,margin and border */
+   box-sizing: border-box; 
+
+ }
+
+ body {
+   background-color: #040714;
+   color: #f9f9f9;
+
+   font-family: Avenir-Roman , sans-serif;
+   margin: 0;
+   padding: 0;
+ } 
+
+ a {
+   text-decoration: none;
+   color: #f9f9f9;
+ }
+
+ /* Global Media Queries  */
+ /* For anything above 768px */
+ /* For 1080p screen and above */
+ @media only screen and (min-width:768px) {
+   body {
+     font-size: 16px
+   }
+ }
+
+ /* for anything between 480px and 768px  */
+ /* For tablets and smaller laptops */
+ @media only screen and (min-width:480px) and (max-width:768px) {
+   body {
+     font-size: 15px;
+   }
+ }
+
+ /* For anything below 479px */
+ /* For mobile devices  */
+ @media only screen and (max-width:479px) {
+   body {
+     font-size: 14px;
+   }
+ }
+
