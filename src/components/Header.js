@@ -7,26 +7,54 @@ import WatchlistIcon from "../images/watchlist-icon.svg";
 import OriginalsIcon from "../images/watchlist-icon.svg";
 import MoviesIcon from "../images/movie-icon.svg";
 import SeriesIcon from "../images/series-icon.svg";
-import { signInWithGoogle } from "../firebase";
+import { auth, signInWithGoogle } from "../firebase";
 import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+
+import { useNavigate } from "react-router-dom";
+
 // import { useHistory } from "react-router-dom";
 import {
   selectUserName,
   selectUserPhoto,
+  setSignOutState,
   setUserLoginDetails,
 } from "../app/features/user/userSlice";
+
+
+
 const Header = () => {
   const dispatch = useDispatch();
   const username = useSelector(selectUserName);
   const userPhoto = useSelector(selectUserPhoto);
+  const navigate = useNavigate();
 
+  // This hook looks for changes in the specified varaible and then executes the given function
+  useEffect(() => {
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        setUser(user);
+        navigate("/Home");
+      }
+    });
+  }, [username]);
+
+  // This code handles the google authentication 
   const handleAuth = () => {
-    signInWithGoogle()
+    if (!username) {
+      signInWithGoogle()
       .then((result) => setUser(result.user))
       .catch((error) => console.log(error));
+    }
+    else if (username) {
+      auth.signOut().then(() => {
+        dispatch(setSignOutState());
+        navigate("/")
+      }).catch(err => alert(err.message))
+    }
   };
 
-  // function to set the user details after login 
+  // function to set the user details after login
   const setUser = (user) => {
     dispatch(
       setUserLoginDetails({
@@ -71,8 +99,11 @@ const Header = () => {
               <img src={SeriesIcon} alt="SERIES" />
               <span>SERIES</span>
             </a>
-          </NavMenu>
-          <UserImg src={userPhoto} alt={username} />
+            </NavMenu>
+            <SignOut>
+              <UserImg src={userPhoto} alt={username} />
+              <DropDown onClick={handleAuth}>Sign Out</DropDown>
+            </SignOut>
         </>
       )}
     </Nav>
@@ -172,6 +203,7 @@ const LoginBtn = styled.a`
   border-radius: 4px;
   transition: all 0.2s ease 0s;
   font-weight: bold;
+  cursor: pointer;
   &:hover {
     background-color: #f9f9f9;
     color: #000;
@@ -179,6 +211,44 @@ const LoginBtn = styled.a`
   }
 `;
 const UserImg = styled.img`
-  height: 100%;
+  height: 80%;
+  border-radius: 50%;
 `;
+
+const DropDown = styled.div`
+  position: absolute;
+  top: 48px;
+  right: 0px;
+  background: rgb(19 19 19);
+  border: 1px solid rgba(151 151 151 /34%);
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 13px;
+  letter-spacing: 3px;
+  text-align: center;
+  width: 100px;
+  opacity: 0;
+
+`
+const SignOut = styled.div`
+  position: relative;
+  height: 48px;
+  width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  ${UserImg} {
+    width: 100%;
+    height: 100%;
+  }
+
+  &:hover {
+    ${DropDown} {
+      opacity: 1;
+      transition: opacity 1s ease-out;
+    }
+  }
+`
 export default Header;
